@@ -10,8 +10,14 @@ const axiosInstance = axios.create({
 
 export const createList = async (title: string, tasks: string[]): Promise<{ message: string }> => {
   try {
-    const response = await axiosInstance.post<{ message: string }>('/lists/create', { title, tasks });
+    const response = await axiosInstance.post<{ message: string }>('/lists/create', { title, tasks }, {
+      headers: {
+        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+      },
+    });
+
     const { message } = response.data
+
     return { message };
   } catch (e) {
     return handleApiError(e);
@@ -20,10 +26,15 @@ export const createList = async (title: string, tasks: string[]): Promise<{ mess
 
 export const getAllTasksLists = async (): Promise<List[] | { message: string }> => {
   try {
-    const response = await axiosInstance.get<{ tasks: Task[] }>('/lists/all');
+    const response = await axiosInstance.get<{ tasks: Task[] }>('/lists/all', {
+      headers: {
+        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+      },
+    });
     const { tasks } = response.data;
 
     const listMap: Record<string, List> = {};
+
     tasks.forEach(({ listId, listTitle, ...task }) => {
       if (!listMap[listId]) {
         listMap[listId] = {
@@ -43,7 +54,12 @@ export const getAllTasksLists = async (): Promise<List[] | { message: string }> 
 
 export const getTaskList = async (id: number): Promise<List | { message: string }> => {
   try {
-    const response = await axiosInstance.get<{ taskList: Task[] }>(`/lists/${id}`);
+    const response = await axiosInstance.get<{ taskList: Task[] }>(`/lists/${id}`, {
+      headers: {
+        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+      },
+    });
+    
     const { taskList } = response.data;
 
     if (!taskList || taskList.length === 0) {
@@ -62,7 +78,7 @@ export const addTask = async (id: number, title: string): Promise<List | { messa
       title,
     }, {
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Basic ${import.meta.env.VITE_AUTH_TOKEN}`
       },
     });
 
@@ -80,7 +96,11 @@ export const addTask = async (id: number, title: string): Promise<List | { messa
 
 export const completeTask = async (id: number, completed: boolean) => {
   try {
-    await axiosInstance.put(`/tasks/${id}/complete`, { completed });
+    await axiosInstance.put(`/tasks/${id}/complete`, { completed }, {
+      headers: {
+        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+      },
+    });
   } catch (e) {
     return handleApiError(e);
   }
@@ -88,7 +108,11 @@ export const completeTask = async (id: number, completed: boolean) => {
 
 export const deleteTask = async (taskId: number, listId: number): Promise<List | { message: string }> => {
   try {
-    const response = await axiosInstance.delete<{ taskList: Task[] }>(`/lists/${listId}/task/${taskId}`);
+    const response = await axiosInstance.delete<{ taskList: Task[] }>(`/lists/${listId}/task/${taskId}`, {
+      headers: {
+        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+      },
+    });
 
     const { taskList } = response.data;
 

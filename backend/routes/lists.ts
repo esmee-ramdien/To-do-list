@@ -1,15 +1,16 @@
 import express from 'express';
-import { getAllTaksLists, getTaskList, insertTask , insertTaskList, deleteTask} from '../database/queries';
+import { tokenComparer } from '../middleware/authentication';
+import { getAllTaksLists, getTaskList, insertTask, insertTaskList, deleteTask } from '../database/queries';
 
 const router = express.Router();
 
 router.post('/create', async (req, res) => {
     try {
-        const {title, tasks} = req.body
+        const { title, tasks } = req.body
 
         const listId = await insertTaskList(title)
 
-        for ( const task of tasks) {
+        for (const task of tasks) {
             await insertTask(listId.toString(), task)
         }
 
@@ -25,7 +26,7 @@ router.post('/create', async (req, res) => {
     }
 });
 
-router.get('/all', async (_req, res) => {
+router.get('/all', tokenComparer, async (req, res) => {
     try {
         const tasks = await getAllTaksLists();
 
@@ -60,7 +61,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.delete('/:listId/task/:taskId', async (req, res) => {
-    const { taskId, listId} = req.params;
+    const { taskId, listId } = req.params;
 
     try {
         await deleteTask(Number(taskId));
@@ -70,7 +71,8 @@ router.delete('/:listId/task/:taskId', async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: 'Error updating task' });
-    }}
+    }
+}
 )
 
 export default router;
