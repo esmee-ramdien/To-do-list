@@ -4,6 +4,7 @@ import router from './router.tsx'
 import './App.css'
 
 function App() {
+  
   return (
     <>
       <Navbar />

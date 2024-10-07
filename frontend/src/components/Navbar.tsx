@@ -11,19 +11,19 @@ function Navbar() {
                     <ul className="flex flex-row justify-between font-medium text-xl space-x-4 w-full">
                         <div className="flex space-x-4">
                             <li>
-                                <a onClick={() => navigateTo('/overzicht')}>
-                                    Mijn overzicht
+                                <a onClick={() => navigateTo('/overview')}>
+                                    Overview
                                 </a>
                             </li>
                             <li>
-                            <a onClick={() => navigateTo('/nieuwe-lijst')}>
-                                    Nieuwe taaklijst
+                            <a onClick={() => navigateTo('/new-list')}>
+                                    New Task List
                                 </a>
                             </li>
                         </div>
                         <li>
-                        <a onClick={() => navigateTo('/overzicht')}>
-                                Inloggen
+                        <a onClick={() => navigateTo('/overview')}>
+                                Log in/Sign up
                             </a>
                         </li>
                     </ul>

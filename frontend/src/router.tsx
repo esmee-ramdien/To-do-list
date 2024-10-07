@@ -6,19 +6,19 @@ import NewList from "./views/NewList";
 const router = createBrowserRouter([
     {
         path: '/',
-        element:< Navigate to='/overzicht'/>
+        element:< Navigate to='/overview'/>
     },
     {
-        path: "/overzicht",
+        path: "/overview",
         element: <Dashboard />
     },
     {
-        path: "/nieuwe-lijst",
+        path: "/new-list",
         element: <NewList />,
     },
     {
-        path: "/list",
-        element: <List />,
+        path: '/list/:id',
+        element: <List />
     }
 ]);
 

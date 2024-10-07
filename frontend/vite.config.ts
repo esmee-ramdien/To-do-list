@@ -11,4 +11,7 @@ export default defineConfig({
     //  @ts-ignore
     tailwindcss()
   ],
+  css: {
+    postcss,
+  }
 })
