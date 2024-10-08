@@ -34,7 +34,7 @@ Follow the steps below to set up the project for local development:
 Clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/To-do-list.git
+git clone https://github.com/esmee-ramdien/To-do-list.git
 cd To-do-list
 ```
 ### 2. Install dependencies
@@ -66,7 +66,7 @@ For the frontend, I have chosen to a lightweight CSS library, i.e., TailwindCSS,
 The application is built using **React.js**, a JavaScript framework that aligns with **Bizcuit's** tech stack. While I am more familiar with **Vue.js**, I chose **React** to expand my knowledge of different JS frameworks and improve my flexibility as a developer. This decision also allows for better integration with the team's existing tools and practices.
 
 ### Backend
-For the backend, I selected **Express.js**, which is known as a fast and minimal API framework that offers simplicity. It allows for easy extension with middleware, such as its Basic Auth library, which enables for basic HTTP authorization.
+For the backend, I selected **Express.js**, which is known as a fast and minimal API framework. It allows for easy extension with middleware, such as its Basic Auth library, which enables for basic HTTP authorization.
 
 I chose **SQLite3** as the database due to its simplicity and great support. Given the small scope of this project, setting up a dedicated SQL server would be overkill, and **SQLite3** provides an efficient and lightweight alternative.
 
