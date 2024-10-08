@@ -36,16 +36,16 @@ Clone this repository to your local machine:
 ```bash
 git clone https://github.com/your-username/todo-list-app.git
 cd todo-list-app
-
+```
 ### 2. Install dependencies
 
 Install dependencies by running
 ```bash
 npm install
-
+```
 ### 3. Running the Frontend and Backend
 
 Run both ends separately and run
 ```bash
 npm run dev
-
+```
