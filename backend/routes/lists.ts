@@ -1,6 +1,5 @@
 import express from 'express';
-import { tokenComparer } from '../middleware/authentication';
-import { getAllTaksLists, getTaskList, insertTask, insertTaskList, deleteTask } from '../database/queries';
+import { getAllTaskLists, getTaskListByID, insertTask, insertTaskList, deleteTask } from '../database/queries';
 
 const router = express.Router();
 
@@ -11,24 +10,24 @@ router.post('/create', async (req, res) => {
         const listId = await insertTaskList(title)
 
         for (const task of tasks) {
-            await insertTask(listId.toString(), task)
+            await insertTask(listId, task)
         }
 
         if (listId) {
             res.status(200).json({ message: 'List created' });
         } else {
-            res.status(404).json({ message: "No lists found." });
+            res.status(404).json({ message: "No list found." });
         }
     } catch (error: unknown) {
         res.status(500).json({
-            message: "Error occurred while fetching the lists."
+            message: "Error occurred while creating the list."
         });
     }
 });
 
-router.get('/all', tokenComparer, async (req, res) => {
+router.get('/all', async (req, res) => {
     try {
-        const tasks = await getAllTaksLists();
+        const tasks = await getAllTaskLists();
 
         if (tasks) {
             res.status(200).json({ tasks });
@@ -46,7 +45,7 @@ router.get('/:id', async (req, res) => {
     const id = req.params.id
 
     try {
-        const taskList = await getTaskList(Number(id));
+        const taskList = await getTaskListByID(Number(id));
 
         if (taskList) {
             res.status(200).json({ taskList });
@@ -66,7 +65,7 @@ router.delete('/:listId/task/:taskId', async (req, res) => {
     try {
         await deleteTask(Number(taskId));
 
-        const taskList = await getTaskList(Number(listId));
+        const taskList = await getTaskListByID(Number(listId));
         res.status(200).json({ taskList });
 
     } catch (error) {

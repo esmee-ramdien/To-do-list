@@ -22,4 +22,8 @@ const router = createBrowserRouter([
     }
 ]);
 
+export const navigateTo = (to: string) => {
+    router.navigate(to);
+};
+
 export default router

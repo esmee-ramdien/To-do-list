@@ -1,17 +1,17 @@
 import express from 'express';
-import { insertTask, getTaskList, completeTask } from '../database/queries';
+import { insertTask, getTaskListByID, completeTask } from '../database/queries';
 
 const router = express.Router();
 
-router.post('/:id/addItem', async (req, res) => {
-    const { id } = req.params;
+router.post('/:listId/addItem', async (req, res) => {
+    const { listId } = req.params;
     const { title } = req.body;
 
     try {
-        const post = await insertTask(id, title);
+        const post = await insertTask(Number(listId), title);
 
         if (post) {
-            const taskList = await getTaskList(Number(id));
+            const taskList = await getTaskListByID(Number(listId));
             res.status(200).json({ taskList });
         } else {
             res.status(404).json({ message: "No lists found." });
@@ -23,12 +23,12 @@ router.post('/:id/addItem', async (req, res) => {
     }
 });
 
-router.put('/:id/complete', async (req, res) => {
-    const { id } = req.params;
+router.put('/:taskId/complete', async (req, res) => {
+    const { taskId } = req.params;
     const { completed } = req.body;
 
     try {
-        await completeTask(Number(id), completed);
+        await completeTask(Number(taskId), completed);
 
         res.status(200).json({ message: 'Task update completed' });
     } catch (error) {

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getTaskList, addTask, completeTask, deleteTask } from '../api';
-import type { List, Task } from '../@types/responses';
+import { getTaskListByID, addTask, completeTask, deleteTask } from '../api';
 import { useParams } from 'react-router-dom';
 import TrashCan from '../assets/icons/trash.svg'
+import type { List, Task } from '../@types/responses';
 
 function List() {
     const { id } = useParams<{ id: string }>();
@@ -19,8 +19,8 @@ function List() {
         }
 
         try {
-            const data = await getTaskList(listId);
-            
+            const data = await getTaskListByID(listId);
+
             if ('listId' in data) {
                 setList(data);
             } else {
@@ -37,7 +37,7 @@ function List() {
 
     const addToList = async (listId: number | undefined, title: string) => {
         if (!listId || !title.trim()) {
-            setError('List ID or task title is missing.');
+            setError('List ID or task name is missing.');
             return;
         }
     
@@ -62,7 +62,8 @@ function List() {
             const updatedTasks : Task[] = list?.tasks.map(task =>
                 task.taskId === taskId ? { ...task, taskCompleted: !currentCompleted } : task
             ) ?? [];
-        setList(currentList => currentList ? { ...currentList, tasks: updatedTasks } : currentList);
+
+            setList(currentList => currentList ? { ...currentList, tasks: updatedTasks } : currentList);
         } catch (e: unknown) {
             setError('Failed to update task completion');
         }

@@ -1,9 +1,6 @@
-import router from "../router";
+import { navigateTo } from "../router";
 
 function Navbar() {
-    const navigateTo = (to: string) => {
-        router.navigate(to)
-    }
     return (
         <>
             <nav className='fixed top-0 left-0 z-50 w-full mb-4 bg-cyan-800'>

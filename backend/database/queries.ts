@@ -1,7 +1,7 @@
 import { runQuery, getAllQuery } from '../functions/helpers';
 import sqlite3 from 'sqlite3';
 
-const db = new sqlite3.Database('./database/database.sqlite', (err: Error | null) => {
+const db = new sqlite3.Database('./database.sqlite', (err: Error | null) => {
     if (err) {
         console.error('Error connecting to DB:', err.message);
     } else {
@@ -33,31 +33,37 @@ export const createTables = async () => {
 };
 
 export const insertTaskList = async (title: string): Promise<number> => {
-    return new Promise<number>((resolve, reject) => {
-        db.run(`INSERT INTO lists (title) VALUES (@title)`, [title], function (err: unknown) {
-            if (err) {
-                console.error('List could not be added:', err instanceof Error ? err.message : 'Unknown error occurred');
-                reject(err instanceof Error ? err : new Error('Unknown error occurred'));
-            } else {
-                console.log('Successfully added task list:', title);
-                resolve(this.lastID);
-            }
-        });
-    });
+    try {
+        const query = `INSERT INTO lists (title) VALUES (@title)`;
+        const listId = await runQuery(query, [title]) as number;
+
+        console.log('Successfully added task list:', title);
+        return listId;
+    } catch (err: unknown) {
+        console.error('List could not be added:', err instanceof Error ? err.message : 'Unknown error occurred');
+
+        throw err;
+    }
 };
 
-export const insertTask = async (listId: string, title: string): Promise<boolean> => {
+
+export const insertTask = async (listId: number, title: string): Promise<boolean> => {
     try {
-        await runQuery(`INSERT INTO tasks (listId, title) VALUES (@listId, @title)`, [Number(listId), title]);
-        console.log('Successfully added task:', title, 'to list ID:', listId);
+        const query = `INSERT INTO tasks (listId, title) VALUES (@listId, @title)`;
+
+        await runQuery(query, [Number(listId), title]);
+
+        console.log(`Successfully added task ${title} to list ID ${listId})`);
+
         return true;
     } catch (err: unknown) {
         console.error('Task could not be added:', err instanceof Error ? err.message : 'Unknown error occurred');
+        
         return false;
     }
 };
 
-export const getAllTaksLists = async () => {
+export const getAllTaskLists = async () => {
     const query = `
         SELECT lists.id AS listId, lists.title AS listTitle,
                tasks.id AS taskId, tasks.title AS taskTitle, tasks.completed AS taskCompleted
@@ -68,6 +74,7 @@ export const getAllTaksLists = async () => {
 
     try {
         const rows = await getAllQuery(query);
+
         if (rows.length === 0) {
             console.log('No task lists or tasks found.');
         } else {
@@ -97,7 +104,7 @@ export const completeTask = async (taskId: number, completed: number) => {
 };
 
 
-export const getTaskList = async (id: number) => {
+export const getTaskListByID = async (id: number) => {
     const query = `
         SELECT lists.id AS listId, lists.title AS listTitle,
                tasks.id AS taskId, tasks.title AS taskTitle, tasks.completed AS taskCompleted
@@ -146,6 +153,5 @@ export const closeDB = () => {
         }
     });
 };
-
 
 export default db

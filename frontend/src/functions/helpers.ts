@@ -10,7 +10,7 @@ export const processTaskLists = (taskList: Task[]): List => {
             taskId: task.taskId,
             taskTitle: task.taskTitle,
             taskCompleted: !!task.taskCompleted,
-        })),
+        } as Task)),
     };
 };
 

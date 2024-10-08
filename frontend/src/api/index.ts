@@ -10,9 +10,13 @@ const axiosInstance = axios.create({
 
 export const createList = async (title: string, tasks: string[]): Promise<{ message: string }> => {
   try {
-    const response = await axiosInstance.post<{ message: string }>('/lists/create', { title, tasks }, {
+    const response = await axiosInstance.post<{ message: string }>('/lists/create', { 
+      title, 
+      tasks 
+    }, {
       headers: {
-        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${import.meta.env.VITE_AUTH_TOKEN}`
       },
     });
 
@@ -24,42 +28,41 @@ export const createList = async (title: string, tasks: string[]): Promise<{ mess
   }
 };
 
-export const getAllTasksLists = async (): Promise<List[] | { message: string }> => {
+export const getAllTaskLists = async (): Promise<List[] | { message: string }> => {
   try {
     const response = await axiosInstance.get<{ tasks: Task[] }>('/lists/all', {
       headers: {
-        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+        'Authorization': `Basic ${import.meta.env.VITE_AUTH_TOKEN}`
       },
     });
+
     const { tasks } = response.data;
 
-    const listMap: Record<string, List> = {};
+    const listMap: Record<string, Task[]> = {};
 
-    tasks.forEach(({ listId, listTitle, ...task }) => {
-      if (!listMap[listId]) {
-        listMap[listId] = {
-          listId,
-          listTitle,
-          tasks: [],
-        };
+    tasks.forEach((task) => {
+      if (!listMap[task.listId]) {
+        listMap[task.listId] = [];
       }
-      listMap[listId].tasks.push(task as Task);
+      listMap[task.listId].push(task);
     });
 
-    return Object.values(listMap);
+    const processedLists: List[] = Object.values(listMap).map((taskGroup) => processTaskLists(taskGroup));
+
+    return processedLists;
   } catch (e) {
     return handleApiError(e);
   }
 };
 
-export const getTaskList = async (id: number): Promise<List | { message: string }> => {
+export const getTaskListByID = async (listId: number): Promise<List | { message: string }> => {
   try {
-    const response = await axiosInstance.get<{ taskList: Task[] }>(`/lists/${id}`, {
+    const response = await axiosInstance.get<{ taskList: Task[] }>(`/lists/${listId}`, {
       headers: {
-        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+        'Authorization': `Basic ${import.meta.env.VITE_AUTH_TOKEN}`
       },
     });
-    
+
     const { taskList } = response.data;
 
     if (!taskList || taskList.length === 0) {
@@ -72,9 +75,9 @@ export const getTaskList = async (id: number): Promise<List | { message: string 
   }
 };
 
-export const addTask = async (id: number, title: string): Promise<List | { message: string }> => {
+export const addTask = async (listId: number, title: string): Promise<List | { message: string }> => {
   try {
-    const response = await axiosInstance.post<{ taskList: Task[] }>(`/tasks/${id}/addItem`, {
+    const response = await axiosInstance.post<{ taskList: Task[] }>(`/tasks/${listId}/addItem`, {
       title,
     }, {
       headers: {
@@ -94,11 +97,11 @@ export const addTask = async (id: number, title: string): Promise<List | { messa
   }
 };
 
-export const completeTask = async (id: number, completed: boolean) => {
+export const completeTask = async (taskId: number, completed: boolean) => {
   try {
-    await axiosInstance.put(`/tasks/${id}/complete`, { completed }, {
+    await axiosInstance.put(`/tasks/${taskId}/complete`, { completed }, {
       headers: {
-        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+        'Authorization': `Basic ${import.meta.env.VITE_AUTH_TOKEN}`
       },
     });
   } catch (e) {
@@ -110,7 +113,7 @@ export const deleteTask = async (taskId: number, listId: number): Promise<List |
   try {
     const response = await axiosInstance.delete<{ taskList: Task[] }>(`/lists/${listId}/task/${taskId}`, {
       headers: {
-        'Authorization': `${import.meta.env.VITE_AUTH_TOKEN}`
+        'Authorization': `Basic ${import.meta.env.VITE_AUTH_TOKEN}`
       },
     });
 

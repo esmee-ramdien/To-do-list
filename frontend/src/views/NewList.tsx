@@ -1,6 +1,7 @@
-import router from "../router";
+import { navigateTo } from "../router";
 import { useState } from 'react';
 import { createList } from '../api';
+import TrashCan from '../assets/icons/trash.svg'
 
 function NewList() {
     const [error, setError] = useState<string | null>(null);
@@ -9,9 +10,7 @@ function NewList() {
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState('');
 
-    const navigateTo = (to: string) => {
-        router.navigate(to);
-    };
+
 
     const addToList = () => {
         if (inputValue.trim() !== '') {
@@ -19,6 +18,10 @@ function NewList() {
 
             setInputValue('');
         }
+    };
+
+    const removeFromList = (target: string) => {
+        setTodoList(prevList => prevList.filter(task => task !== target));
     };
 
     const saveList = async () => {
@@ -43,8 +46,16 @@ function NewList() {
     };
 
     const mappedList = todoList.map((item, index) => (
-        <li key={index}>
-            {item}
+        <li key={index} className='flex items-center justify-between text-left font-bold'>
+            <div className='flex flex-row'>
+                {item}
+            </div>
+            <img
+                onClick={() => removeFromList(item)}
+                src={TrashCan}
+                className="h-5 cursor-pointer"
+                alt="trash"
+            />
         </li>
     ));
 
